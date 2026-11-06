@@ -2,31 +2,73 @@
 
 개인끼리 공유하여 설치하는 Windows x64용 Codex 플러그인입니다. 일반 작성 지침과 읽기 전용 MCP, Node.js 실행 파일을 포함합니다.
 
-## 설치
-공개 저장소이므로 별도의 저장소 초대 없이 설치할 수 있습니다.
+## 처음 설치하나요? 그림을 따라 해 보세요
 
-### 대화창에서 설치 요청하기
+**Windows 64비트용입니다.** Codex 앱에 로그인한 상태에서 시작하세요. Mac·Linux용은 아닙니다.
 
-Codex 대화창에 아래 문구를 입력합니다.
+- **Node.js와 npm은 따로 설치하지 않아도 됩니다.** 필요한 실행 파일이 들어 있습니다.
+- 공개 저장소라서 초대나 GitHub 로그인 없이 다운로드할 수 있습니다.
+- 아래 그림은 이해를 돕는 **설명용 그림**입니다. 실제 앱의 버튼 이름과 위치는 다를 수 있습니다.
 
-> https://github.com/DejaView7/planning-assistant-marketplace.git 저장소를 마켓플레이스로 추가하고 planning-assistant@planning-assistant-share 플러그인을 설치해 주세요.
+### 1. Codex를 열어요
 
-설치 작업에 필요한 실행 승인이 표시되면 확인합니다. 다른 AI 서비스의 일반 대화창에서 자동 설치되는 기능은 아닙니다.
+![1단계: Codex 앱을 열고 대화를 시작합니다.](docs/images/install-01-open.png)
 
-### 터미널에서 직접 설치하기
+Codex 앱을 실행하고, 로그인한 뒤 대화를 시작하세요.
 
-Codex가 설치된 PC의 PowerShell 등 터미널에서 다음 두 명령을 순서대로 실행합니다. 아래 코드는 대화 입력용 문구가 아닙니다.
+### 2. 아래 문구를 복사해서 보내요
+
+![2단계: 설치 요청 문구를 대화창에 붙여넣고 보냅니다.](docs/images/install-02-request.png)
+
+**아래 상자의 문구 전체를 복사 → Codex 대화 입력칸에 붙여넣기 → 보내기** 순서입니다.
+
+```text
+https://github.com/DejaView7/planning-assistant-marketplace.git
+이 저장소를 마켓플레이스로 추가하고 planning-assistant@planning-assistant-share 플러그인을 설치해 주세요.
+```
+
+브라우저 주소창이나 GitHub 댓글에 넣는 문구가 아닙니다. **Codex와 대화하는 입력칸**에 넣으세요.
+
+### 3. 설치 완료 안내를 기다려요
+
+![3단계: 설치 관련 실행 요청을 확인하고 완료될 때까지 기다립니다.](docs/images/install-03-approve.png)
+
+Codex가 설치 작업을 진행합니다. 실행을 허용할지 묻는 창이 나오면 **이번 플러그인 설치에 관한 요청인지 확인한 뒤** 승인하세요. 확인 창이 없으면 그대로 기다리면 됩니다.
+
+### 4. Codex를 다시 열고 확인해요
+
+![4단계: Codex를 다시 실행하고 지침 목록을 요청합니다.](docs/images/install-04-check.png)
+
+설치가 끝나면 **Codex를 완전히 종료했다가 다시 실행**하세요. 그다음 대화창에 아래 문장을 보내세요.
+
+```text
+사업기획 통합 비서의 지침 목록을 조회해 주세요.
+```
+
+스킬이나 페르소나 목록이 조회되면 설치 확인이 끝난 것입니다. 실제 문서 작성도 같은 대화에서 요청할 수 있습니다.
+
+### 막히면 이렇게 요청하세요
+
+| 이런 상황이면 | Codex에 이렇게 말해 보세요 |
+|---|---|
+| Git을 찾을 수 없다고 나와요 | “이 컴퓨터에서 Git을 사용할 수 있는지 확인하고 설치 방법을 안내해 주세요.” |
+| 플러그인을 찾을 수 없대요 | “planning-assistant-share 마켓플레이스와 planning-assistant 플러그인의 등록·설치 상태를 확인해 주세요.” |
+| 설치했는데 지침이 안 보여요 | Codex를 완전히 종료했다가 다시 열고 지침 목록을 다시 요청하세요. |
+| 다시 실행해도 안 돼요 | “사업기획 통합 비서의 MCP 연결 오류를 확인해 주세요.” |
+
+<details>
+<summary>터미널을 사용할 줄 안다면: 명령어로 직접 설치하기</summary>
+
+아래 두 줄은 **PowerShell 등 터미널**에서 순서대로 실행하는 명령어입니다.
 
 ```powershell
 codex plugin marketplace add https://github.com/DejaView7/planning-assistant-marketplace.git
 codex plugin add planning-assistant@planning-assistant-share
 ```
 
-설치가 완료되면 Codex 앱을 완전히 종료하고 다시 실행합니다. 다음 문장으로 조회를 확인합니다.
+설치 후 Codex를 완전히 종료했다가 다시 실행하세요. Codex의 로컬 플러그인·MCP 기능과 Git 저장소 다운로드를 지원하는 환경이 필요합니다.
 
-> 사업기획 통합 비서의 지침 목록을 조회해 주세요.
-
-받는 분은 Node.js나 npm을 별도로 설치할 필요가 없습니다. Codex의 로컬 플러그인·MCP 기능과 Git 저장소 다운로드를 지원하는 환경이 필요합니다. 공개 저장소를 다운로드하기 위한 별도 초대나 GitHub 로그인은 필요하지 않습니다. Mac·Linux용 배포본은 별도로 준비해야 합니다.
+</details>
 
 ## 사용
 - 사업 아이디어를 구체화하고 기획서 초안을 작성해 주세요.
