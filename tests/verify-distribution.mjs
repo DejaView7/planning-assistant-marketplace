@@ -1,0 +1,35 @@
+import assert from "node:assert/strict";
+import {readFile,readdir} from "node:fs/promises";
+import path from "node:path";
+import {spawn} from "node:child_process";
+import {fileURLToPath} from "node:url";
+import {tmpdir} from "node:os";
+const root=fileURLToPath(new URL("../",import.meta.url)),plugin=path.join(root,"plugins/planning-assistant");
+const readJSON=async p=>JSON.parse(await readFile(p,"utf8"));
+const manifest=await readJSON(path.join(plugin,"plugin.json")),legacy=await readJSON(path.join(plugin,".codex-plugin/plugin.json"));
+assert.equal(manifest.name,legacy.name);assert.equal(manifest.version,legacy.version);
+assert.deepEqual(manifest.extensions["com.openai"].interface,legacy.interface);
+assert.ok(manifest.extensions["com.openai"].interface.shortDescription.length<=30);
+const market=await readJSON(path.join(root,".agents/plugins/marketplace.json"));
+assert.equal(path.resolve(root,market.plugins[0].source.path),plugin);
+const library=await readJSON(path.join(plugin,"server/library.json"));
+assert.equal(library.length,62);assert.equal(library.filter(x=>x.category==="persona").length,29);
+assert.doesNotMatch(JSON.stringify(library),/제로웹|케어벨|carebell|zeroweb|607-86-05339/i);
+let inspected=0;
+async function scan(dir){for(const item of await readdir(dir,{withFileTypes:true})){const p=path.join(dir,item.name);if(item.isDirectory())await scan(p);else if(/\.(json|md|mjs)$/.test(p)){const s=await readFile(p,"utf8");assert.doesNotMatch(s,/C:[\\/]+Users[\\/]|AppData[\\/]|607-86-05339|제로웹|케어벨|carebell|zeroweb/i,p);inspected++;}}}
+await scan(plugin);
+const main=await readFile(path.join(plugin,"skills/planning-assistant-workflow/SKILL.md"),"utf8");
+for(const [,p] of main.matchAll(/\]\((references\/[^)]+)\)/g))await readFile(path.join(plugin,"skills/planning-assistant-workflow",p));
+const mcp=await readJSON(path.join(plugin,"mcp.json")),server=mcp.mcpServers["planning-guides"];
+const variable="$"+"{PLUGIN_ROOT}";
+const command=server.command.replaceAll(variable,plugin),args=server.args.map(x=>x.replaceAll(variable,plugin));
+const child=spawn(command,args,{cwd:tmpdir(),stdio:["pipe","pipe","pipe"],windowsHide:true});
+let output="",stderr="";child.stdout.on("data",b=>output+=b);child.stderr.on("data",b=>stderr+=b);
+const messages=[{jsonrpc:"2.0",id:1,method:"initialize",params:{protocolVersion:"2025-03-26"}},{jsonrpc:"2.0",id:2,method:"tools/list"},{jsonrpc:"2.0",id:3,method:"tools/call",params:{name:"list_guides",arguments:{category:"persona"}}},{jsonrpc:"2.0",id:4,method:"tools/call",params:{name:"read_guide",arguments:{resource_id:"prompt-41"}}}];
+const exit=new Promise((resolve,reject)=>{child.on("error",reject);child.on("close",resolve);});
+child.stdin.end(messages.map(x=>JSON.stringify(x)).join("\n")+"\n");
+assert.equal(await exit,0,stderr);
+const results=output.trim().split("\n").map(x=>JSON.parse(x));
+assert.equal(results.length,4);assert.equal(results[1].result.tools.length,2);assert.equal(results[2].result.structuredContent.resources.length,29);assert.match(results[3].result.structuredContent.text,/스텝백|Step|step/);
+console.log(JSON.stringify({passed:true,inspectedTextFiles:inspected,resources:62,personas:29,bundledRuntimeStarted:true,tools:2,externalRequests:false}));
+
