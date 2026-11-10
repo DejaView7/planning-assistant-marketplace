@@ -19,12 +19,17 @@ assert.equal(path.resolve(root,market.plugins[0].source.path),plugin);
 // 실행 파일·서버가 다시 들어오지 않아야 한다.
 for(const p of ["runtime","server",".mcp.json","mcp.json"])assert.equal(await exists(path.join(plugin,p)),false,p);
 
-// 지침 파일 수: 전체 63개, 전문가 관점(페르소나) 30개.
+// 지침 수: README와 플러그인 설명에 적힌 숫자가 실제 파일 수와 같아야 한다.
 const refs=(await readdir(refDir)).filter(f=>f.endsWith(".md"));
-assert.equal(refs.length,63);
 const main=await readFile(path.join(skillDir,"SKILL.md"),"utf8");
 const personas=[...main.matchAll(/^- \[.+\]\(references\/[a-z0-9-]+\.md\) — persona\r?$/gm)].length+refs.filter(f=>f.startsWith("persona-")).length;
-assert.equal(personas,30);
+const skills=refs.filter(f=>f.startsWith("skill-")).length;
+const readme=await readFile(path.join(root,"README.md"),"utf8");
+const count=(text,re,where)=>{const m=text.match(re);assert.ok(m,where+"에 개수 표기가 없습니다: "+re);return Number(m[1]);};
+assert.equal(count(readme,/지침 (\d+)개/,"README"),refs.length,"README 지침 개수");
+for(const [where,text] of [["README",readme],["plugin.json",manifest.extensions["com.openai"].interface.longDescription]]){
+ assert.equal(count(text,/전문가 관점 (\d+)종/,where),personas,where+" 전문가 관점 개수");
+ assert.equal(count(text,/전문 기능 (\d+)종/,where),skills,where+" 전문 기능 개수");}
 
 // 링크: SKILL.md와 지침 안의 링크가 모두 실제 파일을 가리키고, 모든 지침이 SKILL.md에서 연결되어야 한다.
 const linked=new Set();
