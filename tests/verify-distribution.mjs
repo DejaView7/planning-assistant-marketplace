@@ -13,7 +13,7 @@ assert.ok(manifest.extensions["com.openai"].interface.shortDescription.length<=3
 const market=await readJSON(path.join(root,".agents/plugins/marketplace.json"));
 assert.equal(path.resolve(root,market.plugins[0].source.path),plugin);
 const library=await readJSON(path.join(plugin,"server/library.json"));
-assert.equal(library.length,62);assert.equal(library.filter(x=>x.category==="persona").length,29);
+assert.equal(library.length,63);assert.equal(library.filter(x=>x.category==="persona").length,30);
 assert.doesNotMatch(JSON.stringify(library),/제로웹|케어벨|carebell|zeroweb|607-86-05339/i);
 let inspected=0;
 async function scan(dir){for(const item of await readdir(dir,{withFileTypes:true})){const p=path.join(dir,item.name);if(item.isDirectory())await scan(p);else if(/\.(json|md|mjs)$/.test(p)){const s=await readFile(p,"utf8");assert.doesNotMatch(s,/C:[\\/]+Users[\\/]|AppData[\\/]|607-86-05339|제로웹|케어벨|carebell|zeroweb/i,p);inspected++;}}}
@@ -30,6 +30,6 @@ const exit=new Promise((resolve,reject)=>{child.on("error",reject);child.on("clo
 child.stdin.end(messages.map(x=>JSON.stringify(x)).join("\n")+"\n");
 assert.equal(await exit,0,stderr);
 const results=output.trim().split("\n").map(x=>JSON.parse(x));
-assert.equal(results.length,4);assert.equal(results[1].result.tools.length,2);assert.equal(results[2].result.structuredContent.resources.length,29);assert.match(results[3].result.structuredContent.text,/스텝백|Step|step/);
-console.log(JSON.stringify({passed:true,inspectedTextFiles:inspected,resources:62,personas:29,bundledRuntimeStarted:true,tools:2,externalRequests:false}));
+assert.equal(results.length,4);assert.equal(results[1].result.tools.length,2);assert.equal(results[2].result.structuredContent.resources.length,30);assert.match(results[3].result.structuredContent.text,/스텝백|Step|step/);
+console.log(JSON.stringify({passed:true,inspectedTextFiles:inspected,resources:63,personas:30,bundledRuntimeStarted:true,tools:2,externalRequests:false}));
 
