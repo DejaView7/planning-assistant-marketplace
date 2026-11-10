@@ -52,20 +52,6 @@ Codex가 설치 작업을 진행합니다. 실행을 허용할지 묻는 창이 
 | 설치했는데 지침이 보이지 않습니다 | Codex를 완전히 종료했다가 다시 열고 지침 목록을 다시 요청하세요. |
 | 다시 실행해도 작동하지 않습니다 | “planning-assistant 플러그인이 설치·활성화되어 있는지 확인해 주세요.” |
 
-<details>
-<summary>터미널을 사용할 줄 안다면: 명령어로 직접 설치하기</summary>
-
-아래 두 줄은 **PowerShell 등 터미널**에서 순서대로 실행하는 명령어입니다.
-
-```powershell
-codex plugin marketplace add https://github.com/DejaView7/planning-assistant-marketplace.git
-codex plugin add planning-assistant@planning-assistant-share
-```
-
-설치 후 Codex를 완전히 종료했다가 다시 실행하세요. Codex의 플러그인 기능과 Git 저장소 다운로드를 지원하는 환경이 필요합니다.
-
-</details>
-
 ## 사용
 호출 이름은 **자비스**입니다. 설치 후 Codex 대화창에서 이름과 할 일을 함께 말하세요.
 
@@ -100,11 +86,15 @@ HWP·HWPX 파일은 원본을 먼저 열거나 내용을 추출해 본문과 표
 변환 후에는 가능한 범위에서 원본과 페이지, 항목, 표, 중요 수치를 대조합니다. 스캔 문서는 필요한 경우 OCR과 화면 확인을 함께 진행합니다. 변환이나 원본 대조가 불가능하면 확인하지 못한 범위를 알리고 내용을 추정하지 않습니다. 비공개 자료는 임의로 외부 변환 서비스에 전송하지 않습니다.
 
 ## 업데이트
-관리자가 저장소를 갱신한 뒤 사용자는 마켓플레이스 업데이트를 실행하고 앱에서 설치 상태를 확인합니다. 지원되는 명령은 다음과 같습니다.
+관리자가 저장소를 갱신하면, 설치할 때와 같은 Codex 대화 입력칸에 아래 문구를 보내세요.
 
-```powershell
-codex plugin marketplace upgrade planning-assistant-share
+```text
+planning-assistant-share 마켓플레이스를 최신 버전으로 업데이트해 주세요.
 ```
+
+업데이트가 끝나면 **Codex를 완전히 종료했다가 다시 실행**하고, 지침 목록을 다시 요청해 확인하세요.
+
+0.1.x 버전을 쓰다가 업데이트한 경우, 예전 버전에 있던 지침 조회 서버(planning-guides MCP)의 연결 오류가 보일 수 있습니다. 0.2.0부터는 이 서버가 필요 없습니다. 오류가 계속되면 Codex에 “planning-assistant 플러그인을 삭제한 뒤 planning-assistant-share 마켓플레이스에서 다시 설치해 주세요.”라고 요청하세요.
 
 ## 라이선스
 직접 작성한 플러그인 구성·통합 지침은 MIT입니다. 사용자 제공 원본 자료의 구분은 THIRD_PARTY_NOTICES.md를 확인하세요.
