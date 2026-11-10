@@ -21,6 +21,7 @@ description: 사용자가 자비스 또는 Jarvis를 부르며 사업기획 업�
 - [문서·IR 편집](references/skill-business-document-editor.md)
 - [전략·심사 검토](references/skill-business-strategy-review.md)
 - [선택적 협업](references/method-collaboration.md): 중요한 전략 결정에 관련 관점 2~3개의 결론·근거·가정을 이어받아 충돌을 검토하고 하나의 초안으로 통합한다.
+- [고객 관점 검토자](references/persona-customer-perspective.md): 고객 유형·니즈에 맞는 입장과 검증할 가설을 구분해 사업 방향을 검토한다.
 - [공통 기준](references/workflow-common.md)
 - [사업문서 최종 편집자](references/persona-document-editor.md): 최종 문장·양식·가독성 및 PDF를 점검한다.
 
