@@ -15,15 +15,15 @@
 
 ## 필요한 원본 선택
 현재 업무에 필요한 자료만 읽는다. 예시의 업종·역할·분량은 현재 과업에 맞게 조정한다.
-- p.63_페르소나 1_실리콘밸리 최상위 벤처캐피탈의 시니어 파트너_사업계획서 요약.txt (지침 ID: prompt-01)
-- p.66_페르소나 3_IT 전문 미디어의 수석 기자_뉴스 기사 작성.txt (지침 ID: prompt-03)
-- p.118_하십시오체.txt (지침 ID: prompt-29)
-- p.118_해라체.txt (지침 ID: prompt-30)
-- p.119_해요체.txt (지침 ID: prompt-31)
-- p.120_개요체.txt (지침 ID: prompt-32)
-- p.121_개조식.txt (지침 ID: prompt-33)
-- p.123_예시 제공.txt (지침 ID: prompt-34)
-- p.126_예시 제공.txt (지침 ID: prompt-35)
-- p.128_예시 제공.txt (지침 ID: prompt-36)
-- p.130_목적 기반 목차 설계_페르소나 1 사용.txt (지침 ID: prompt-37)
+- p.63_페르소나 1_실리콘밸리 최상위 벤처캐피탈의 시니어 파트너_사업계획서 요약.txt (지침: [prompt-01](prompt-01.md))
+- p.66_페르소나 3_IT 전문 미디어의 수석 기자_뉴스 기사 작성.txt (지침: [prompt-03](prompt-03.md))
+- p.118_하십시오체.txt (지침: [prompt-29](prompt-29.md))
+- p.118_해라체.txt (지침: [prompt-30](prompt-30.md))
+- p.119_해요체.txt (지침: [prompt-31](prompt-31.md))
+- p.120_개요체.txt (지침: [prompt-32](prompt-32.md))
+- p.121_개조식.txt (지침: [prompt-33](prompt-33.md))
+- p.123_예시 제공.txt (지침: [prompt-34](prompt-34.md))
+- p.126_예시 제공.txt (지침: [prompt-35](prompt-35.md))
+- p.128_예시 제공.txt (지침: [prompt-36](prompt-36.md))
+- p.130_목적 기반 목차 설계_페르소나 1 사용.txt (지침: [prompt-37](prompt-37.md))
 

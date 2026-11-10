@@ -16,7 +16,7 @@
 
 ## 필요한 원본 선택
 현재 업무에 필요한 자료만 읽는다. 예시의 업종·역할·분량은 현재 과업에 맞게 조정한다.
-- 공식1: 7요소와 운영 (지침 ID: method-formula-1)
-- 공식2: 사업 단계 (지침 ID: method-formula-2)
-- 공식3: 단계 검증 (지침 ID: method-formula-3)
+- 공식1: 7요소와 운영 (지침: [method-formula-1](method-formula-1.md))
+- 공식2: 사업 단계 (지침: [method-formula-2](method-formula-2.md))
+- 공식3: 단계 검증 (지침: [method-formula-3](method-formula-3.md))
 

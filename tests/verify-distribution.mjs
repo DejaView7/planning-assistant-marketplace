@@ -1,35 +1,42 @@
 import assert from "node:assert/strict";
-import {readFile,readdir} from "node:fs/promises";
+import {readFile,readdir,access} from "node:fs/promises";
 import path from "node:path";
-import {spawn} from "node:child_process";
 import {fileURLToPath} from "node:url";
-import {tmpdir} from "node:os";
 const root=fileURLToPath(new URL("../",import.meta.url)),plugin=path.join(root,"plugins/planning-assistant");
+const skillDir=path.join(plugin,"skills/planning-assistant-workflow"),refDir=path.join(skillDir,"references");
 const readJSON=async p=>JSON.parse(await readFile(p,"utf8"));
+const exists=p=>access(p).then(()=>true,()=>false);
+
+// 매니페스트: 두 형식의 이름·버전·화면 정보가 같고, MCP·로컬 실행 설정이 없어야 한다.
 const manifest=await readJSON(path.join(plugin,"plugin.json")),legacy=await readJSON(path.join(plugin,".codex-plugin/plugin.json"));
 assert.equal(manifest.name,legacy.name);assert.equal(manifest.version,legacy.version);
 assert.deepEqual(manifest.extensions["com.openai"].interface,legacy.interface);
 assert.ok(manifest.extensions["com.openai"].interface.shortDescription.length<=30);
+for(const m of [manifest,manifest.extensions["com.openai"],legacy]){assert.equal(m.mcpServers,undefined);assert.equal(m.requires_local_executor,undefined);}
 const market=await readJSON(path.join(root,".agents/plugins/marketplace.json"));
 assert.equal(path.resolve(root,market.plugins[0].source.path),plugin);
-const library=await readJSON(path.join(plugin,"server/library.json"));
-assert.equal(library.length,63);assert.equal(library.filter(x=>x.category==="persona").length,30);
-assert.doesNotMatch(JSON.stringify(library),/제로웹|케어벨|carebell|zeroweb|607-86-05339/i);
+
+// 실행 파일·서버가 다시 들어오지 않아야 한다.
+for(const p of ["runtime","server",".mcp.json","mcp.json"])assert.equal(await exists(path.join(plugin,p)),false,p);
+
+// 지침 파일 수: 전체 63개, 전문가 관점(페르소나) 30개.
+const refs=(await readdir(refDir)).filter(f=>f.endsWith(".md"));
+assert.equal(refs.length,63);
+const main=await readFile(path.join(skillDir,"SKILL.md"),"utf8");
+const personas=[...main.matchAll(/^- \[.+\]\(references\/[a-z0-9-]+\.md\) — persona\r?$/gm)].length+refs.filter(f=>f.startsWith("persona-")).length;
+assert.equal(personas,30);
+
+// 링크: SKILL.md와 지침 안의 링크가 모두 실제 파일을 가리키고, 모든 지침이 SKILL.md에서 연결되어야 한다.
+const linked=new Set();
+for(const [,p] of main.matchAll(/\]\((references\/[^)]+)\)/g)){await readFile(path.join(skillDir,p));linked.add(path.basename(p));}
+let links=0;
+for(const f of refs){const s=await readFile(path.join(refDir,f),"utf8");
+ assert.doesNotMatch(s,/read_guide|list_guides|지침 ID:/,f);
+ for(const [,p] of s.matchAll(/\]\(([a-z0-9-]+\.md)\)/g)){assert.ok(refs.includes(p),f+" → "+p);links++;}}
+for(const f of refs)assert.ok(linked.has(f),"SKILL.md에서 연결되지 않은 지침: "+f);
+
+// 회사 정보·개인 경로가 섞이지 않아야 한다.
 let inspected=0;
 async function scan(dir){for(const item of await readdir(dir,{withFileTypes:true})){const p=path.join(dir,item.name);if(item.isDirectory())await scan(p);else if(/\.(json|md|mjs)$/.test(p)){const s=await readFile(p,"utf8");assert.doesNotMatch(s,/C:[\\/]+Users[\\/]|AppData[\\/]|607-86-05339|제로웹|케어벨|carebell|zeroweb/i,p);inspected++;}}}
 await scan(plugin);
-const main=await readFile(path.join(plugin,"skills/planning-assistant-workflow/SKILL.md"),"utf8");
-for(const [,p] of main.matchAll(/\]\((references\/[^)]+)\)/g))await readFile(path.join(plugin,"skills/planning-assistant-workflow",p));
-const mcp=await readJSON(path.join(plugin,"mcp.json")),server=mcp.mcpServers["planning-guides"];
-const variable="$"+"{PLUGIN_ROOT}";
-const command=server.command.replaceAll(variable,plugin),args=server.args.map(x=>x.replaceAll(variable,plugin));
-const child=spawn(command,args,{cwd:tmpdir(),stdio:["pipe","pipe","pipe"],windowsHide:true});
-let output="",stderr="";child.stdout.on("data",b=>output+=b);child.stderr.on("data",b=>stderr+=b);
-const messages=[{jsonrpc:"2.0",id:1,method:"initialize",params:{protocolVersion:"2025-03-26"}},{jsonrpc:"2.0",id:2,method:"tools/list"},{jsonrpc:"2.0",id:3,method:"tools/call",params:{name:"list_guides",arguments:{category:"persona"}}},{jsonrpc:"2.0",id:4,method:"tools/call",params:{name:"read_guide",arguments:{resource_id:"prompt-41"}}}];
-const exit=new Promise((resolve,reject)=>{child.on("error",reject);child.on("close",resolve);});
-child.stdin.end(messages.map(x=>JSON.stringify(x)).join("\n")+"\n");
-assert.equal(await exit,0,stderr);
-const results=output.trim().split("\n").map(x=>JSON.parse(x));
-assert.equal(results.length,4);assert.equal(results[1].result.tools.length,2);assert.equal(results[2].result.structuredContent.resources.length,30);assert.match(results[3].result.structuredContent.text,/스텝백|Step|step/);
-console.log(JSON.stringify({passed:true,inspectedTextFiles:inspected,resources:63,personas:30,bundledRuntimeStarted:true,tools:2,externalRequests:false}));
-
+console.log(JSON.stringify({passed:true,version:manifest.version,inspectedTextFiles:inspected,guides:refs.length,personas,crossLinks:links,bundledRuntime:false,mcp:false}));
