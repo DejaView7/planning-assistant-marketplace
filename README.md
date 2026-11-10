@@ -82,6 +82,9 @@ codex plugin add planning-assistant@planning-assistant-share
 ## 자료 취급
 배포본에는 회사 정보·실적·계약·문헌·개인 문서·대화 기록을 포함하지 않습니다. 플러그인은 일반 지침 파일만 제공하며 회사 문서 입력·업로드·저장 기능이 없습니다. 사용자가 AI 대화에 제공한 자료는 해당 AI 서비스에서 처리됩니다.
 
+## 웹 ChatGPT와 무료 계정 시험
+이 저장소의 지침은 서버 없는 스킬 구성입니다. 다만 GitHub에 공개되어 있다는 것만으로 웹 ChatGPT에서 자동으로 설치·공유되는 것은 아닙니다. 현재 안내하는 설치 방식은 Codex 마켓플레이스용이며, 무료 웹 계정의 설치·실행은 실제 계정에서 검증되지 않았습니다. 웹 사용을 위한 제공 경로, Drive 연결, PDF 생성 및 한글 파일 처리 방법은 [웹 사용 검증 안내](docs/WEB_TEST.md)에서 확인하세요.
+
 
 ## 공유 Google Drive 자료 활용
 회사가 관리하는 공용 Google Drive를 팀의 자료 저장소로 사용할 수 있습니다. 사용하는 AI 앱에서 Google Drive 연결을 지원하고, 사용자가 자신의 계정으로 연결한 뒤 해당 파일에 접근할 권한이 있다면 필요한 자료를 검색해 초안 작성에 활용할 수 있습니다.
@@ -103,5 +106,5 @@ codex plugin marketplace upgrade planning-assistant-share
 ## 라이선스
 직접 작성한 플러그인 구성·통합 지침은 MIT입니다. 사용자 제공 원본 자료의 구분은 THIRD_PARTY_NOTICES.md를 확인하세요.
 
-버전: 0.2.0
+버전: 0.2.1
 
