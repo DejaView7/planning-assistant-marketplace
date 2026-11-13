@@ -1,23 +1,22 @@
 import assert from "node:assert/strict";
-import {readFile,readdir,access} from "node:fs/promises";
+import {readFile,readdir} from "node:fs/promises";
+import {inspectPluginContents} from "../scripts/check-plugin-contents.mjs";
 import path from "node:path";
 import {fileURLToPath} from "node:url";
 const root=fileURLToPath(new URL("../",import.meta.url)),plugin=path.join(root,"plugins/planning-assistant");
 const skillDir=path.join(plugin,"skills/planning-assistant-workflow"),refDir=path.join(skillDir,"references");
 const readJSON=async p=>JSON.parse(await readFile(p,"utf8"));
-const exists=p=>access(p).then(()=>true,()=>false);
+
+const inventory=await inspectPluginContents(plugin);
+assert.deepEqual(inventory.issues,[],"지침 전용 배포 정책 위반");
 
 // 매니페스트: 두 형식의 이름·버전·화면 정보가 같고, MCP·로컬 실행 설정이 없어야 한다.
 const manifest=await readJSON(path.join(plugin,"plugin.json")),legacy=await readJSON(path.join(plugin,".codex-plugin/plugin.json"));
 assert.equal(manifest.name,legacy.name);assert.equal(manifest.version,legacy.version);
 assert.deepEqual(manifest.extensions["com.openai"].interface,legacy.interface);
 assert.ok(manifest.extensions["com.openai"].interface.shortDescription.length<=30);
-for(const m of [manifest,manifest.extensions["com.openai"],legacy]){assert.equal(m.mcpServers,undefined);assert.equal(m.requires_local_executor,undefined);}
 const market=await readJSON(path.join(root,".agents/plugins/marketplace.json"));
 assert.equal(path.resolve(root,market.plugins[0].source.path),plugin);
-
-// 실행 파일·서버가 다시 들어오지 않아야 한다.
-for(const p of ["runtime","server",".mcp.json","mcp.json"])assert.equal(await exists(path.join(plugin,p)),false,p);
 
 // 지침 수: README와 플러그인 설명에 적힌 숫자가 실제 파일 수와 같아야 한다.
 const refs=(await readdir(refDir)).filter(f=>f.endsWith(".md"));
@@ -44,4 +43,4 @@ for(const f of refs)assert.ok(linked.has(f),"SKILL.md에서 연결되지 않은 
 let inspected=0;
 async function scan(dir){for(const item of await readdir(dir,{withFileTypes:true})){const p=path.join(dir,item.name);if(item.isDirectory())await scan(p);else if(/\.(json|md|mjs)$/.test(p)){const s=await readFile(p,"utf8");assert.doesNotMatch(s,/C:[\\/]+Users[\\/]|AppData[\\/]|607-86-05339|제로웹|케어벨|carebell|zeroweb/i,p);inspected++;}}}
 await scan(plugin);
-console.log(JSON.stringify({passed:true,version:manifest.version,inspectedTextFiles:inspected,guides:refs.length,personas,crossLinks:links,bundledRuntime:false,mcp:false}));
+console.log(JSON.stringify({passed:true,version:manifest.version,inspectedTextFiles:inspected,guides:refs.length,personas,crossLinks:links,bundledRuntime:inventory.bundledRuntime,mcp:inventory.mcp}));

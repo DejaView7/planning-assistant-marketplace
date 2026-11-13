@@ -38,3 +38,21 @@ test('malformed UTF-8 cannot silently pass', async () => {
     assert.equal(report.findings[0].code, 'unreadable-utf8');
   } finally { await rm(root, {recursive: true, force: true}); }
 });
+
+test('decrease signs, currencies and physical units cannot silently change', () => {
+  for (const [before, after] of [
+    ['△10%', '10%'], ['▲10%', '10%'], ['－10%', '10%'],
+    ['1kg', '1g'], ['1m²', '1m³'], ['1m^2', '1m^3'], ['1kg/개월', '1kg/년'],
+    ['10달러', '10유로'], ['USD 10', 'EUR 10'], ['$10', '€10'],
+    ['−$10', '$10'], ['USD −10', 'USD 10'],
+    ['10백만원', '10만원'], ['1kWh', '1MWh'], ['5%p', '5%'],
+  ]) assert.equal(compareNumbers(before, after, 'a.md').length, 1, `${before} -> ${after}`);
+});
+
+test('unit spacing and surrounding prose do not invent numeric changes', () => {
+  for (const [before, after] of [
+    ['중량은 1 kg이다', '중량: 1kg이다'], ['USD 10', 'USD10'],
+    ['△ 10 %', '△10%'], ['기간 3개월', '기간은 3개월'],
+    ['10만원\n안내', '10만원\n변경 안내'],
+  ]) assert.deepEqual(compareNumbers(before, after, 'a.md'), [], `${before} -> ${after}`);
+});

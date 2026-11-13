@@ -20,9 +20,19 @@ export function inspectText(text, file) {
   return findings;
 }
 
+// A bounded vocabulary: preserve case, signs and units; never convert or repair values.
+// Longer alternatives precede shorter ones (백만원 before 원, mm before m).
+const currency = '(?:US\\$|HK\\$|[₩$€£¥￥]|(?:KRW|USD|EUR|GBP|JPY|CNY)(?![A-Za-z]))';
+const koreanUnit = '(?:퍼센트포인트|백만원|십억원|천만원|천원|만원|억원|달러|유로|파운드|위안|개월|시간|분기|원|엔|년|월|일|분|초|명|개|회|건|대|곳|배|톤)';
+const latinUnit = '(?:kWh|MWh|MHz|GHz|kHz|KiB|MiB|GiB|KB|MB|GB|TB|kg|mg|km|cm|mm|ml|mL|Hz|kW|MW|Wh|ms|ha|m|g|L|W|V|A|s|h)(?:[²³]|\\^[23])?(?![A-Za-z])';
+const unit = `(?:[%％](?:p|포인트)?|℃|℉|°[CF]|${koreanUnit}|${latinUnit}|${currency})`;
+const sign = '[+\\-−﹣－△▲]';
+const numberPattern = new RegExp(
+  `(?:${sign}[ \\t]*)?(?:${currency}[ \\t]*)?(?:${sign}[ \\t]*)?[0-9]+(?:[,.][0-9]+)*(?:[ \\t]*${unit}(?:[ \\t]*/[ \\t]*${unit})?)?|[~〜～–—≤≥<>±]`, 'gu');
+
 export function numberTokens(text) {
-  // Review hints only: ordinary edits and versions also change these tokens.
-  return text.match(/[+\-−]?[0-9]+(?:[,.][0-9]+)*(?:\s*(?:[%％]|천원|만원|억원|원|개월|일|명|개|회))?|[~〜～–—≤≥<>±]/gu) ?? [];
+  // Review hints only. Formatting spaces around signs/units do not change a value.
+  return [...text.matchAll(numberPattern)].map(m => m[0].replace(/[ \t]/g, ''));
 }
 
 export function compareNumbers(before, after, file) {
