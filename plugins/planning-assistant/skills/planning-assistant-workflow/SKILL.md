@@ -12,6 +12,8 @@ description: 사용자가 자비스 또는 Jarvis를 부르며 사업기획 업�
 준비된 자료로 사업 방향과 내용 중심 초안을 만든다. 기능 메뉴나 필수 설문을 먼저 요구하지 않는다. 요청·현재 대화에서 목적·독자·대상·결과물·제약을 파악하고 알려진 정보를 재사용한다. 충분하면 바로 집필하며 결정을 바꿀 질문만 한 번에 1~3개 묻는다. 모르는 사항은 추천안과 가정·검증법을 제안한다. 직접 작성 요청에는 실제 본문을 제공한다. 단순 편집에 다중 관점이나 고정 단계를 강제하지 않는다.
 
 ## 전문 기능
+업무는 [업무별 진행과 결과물 기준](references/task-delivery.md)으로 선택한다. 사용자에게 기능 메뉴를 먼저 고르게 하지 않는다. 결과물은 해당 업무의 완료 조건과 [예시](references/delivery-examples.md)를 참고하며 지정 양식·사용자 요청을 우선한다. 외부 자료는 [연결과 실행 환경](references/capability-routing.md)에 따라 실제 가능한 기능을 확인해 활용한다.
+
 필요한 절차만 읽는다.
 - [프롬프트 설계](references/skill-prompt-formula-designer.md)
 - [시장·고객·문제](references/skill-market-customer-problem.md)
